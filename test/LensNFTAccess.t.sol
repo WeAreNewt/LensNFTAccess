@@ -53,13 +53,25 @@ contract LensNFTAccessTestcl is Test {
         );
     }
 
-    function testSetProfileId() public {
+    function testSetProfileIdIfOwner() public {
         uint256 dummyProfileId = 10;
         lensNFTAccess.setProfileId(dummyProfileId);
         assertEq(dummyProfileId, lensNFTAccess.profileId());
     }
 
-    function testSetCollectionAddress() public {
+     function testSetProfileIdNotIfOwner() public {
+        vm.prank(user);
+        vm.expectRevert('UNAUTHORIZED');
+        lensNFTAccess.setProfileId(10);
+    }
+
+    function testSetCollectionAddressIfNotOwner() public {
+        vm.prank(user);
+        vm.expectRevert('UNAUTHORIZED');
+        lensNFTAccess.setCollectionAddress(address(nft2));
+    }
+
+    function testSetCollectionAddressIfOwner() public {
         lensNFTAccess.setCollectionAddress(address(nft2));
         assertEq(address(nft2), address(lensNFTAccess.nftCollection()));
     }
